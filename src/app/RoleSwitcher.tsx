@@ -9,7 +9,16 @@ import { personaById, personas, type PersonaId } from '@/data/platform';
  * Demo role switcher. It replaces sign-in: there is no login anywhere in the
  * concept. Each entry is a link to the screen that persona uses.
  */
-export function RoleSwitcher({ current, tone = 'light' }: { current: PersonaId | null; tone?: 'light' | 'dark' }) {
+export function RoleSwitcher({
+  current,
+  tone = 'light',
+  compact = false,
+}: {
+  current: PersonaId | null;
+  tone?: 'light' | 'dark';
+  /** Phone widths: show "View as" and keep the persona name for screen readers only. */
+  compact?: boolean;
+}) {
   const [open, setOpen] = useState(false);
   const id = useDomId('roles');
   const wrapRef = useRef<HTMLDivElement>(null);
@@ -52,7 +61,8 @@ export function RoleSwitcher({ current, tone = 'light' }: { current: PersonaId |
       >
         <Users aria-hidden="true" className="h-4 w-4" />
         <span>
-          <span className="sr-only">Demo role switcher. </span>View as{currentPersona ? `: ${currentPersona.name}` : ''}
+          <span className="sr-only">Demo role switcher. </span>View as
+          {currentPersona ? <span className={compact ? 'sr-only' : undefined}>{`: ${currentPersona.name}`}</span> : null}
         </span>
         <ChevronDown aria-hidden="true" className={cx('h-4 w-4 transition-transform', open && 'rotate-180')} />
       </button>
