@@ -19,13 +19,15 @@ export interface TabsProps<T extends string> {
   panelClassName?: string;
   /** Stretch tabs to equal widths (useful on phone screens). */
   fill?: boolean;
+  /** sm: tighter padding and 13px labels, for three or more tabs in a phone frame. */
+  size?: 'md' | 'sm';
 }
 
 /**
  * ARIA tabs with a roving tabindex. Arrow keys move between tabs and select
  * them; Home and End jump to the first and last tab.
  */
-export function Tabs<T extends string>({ label, tabs, value, onChange, variant = 'underline', className, panelClassName, fill }: TabsProps<T>) {
+export function Tabs<T extends string>({ label, tabs, value, onChange, variant = 'underline', className, panelClassName, fill, size = 'md' }: TabsProps<T>) {
   const base = useDomId('tabs');
   const refs = useRef<Array<HTMLButtonElement | null>>([]);
   const index = Math.max(0, tabs.findIndex((t) => t.id === value));
@@ -84,7 +86,8 @@ export function Tabs<T extends string>({ label, tabs, value, onChange, variant =
               onClick={() => onChange(tab.id)}
               onKeyDown={onKeyDown}
               className={cx(
-                'min-h-touch px-3 text-sm font-medium leading-tight transition-colors',
+                'min-h-touch font-medium leading-tight transition-colors',
+                size === 'sm' ? 'px-2 text-[13px]' : 'px-3 text-sm',
                 fill && 'flex-1',
                 variant === 'underline'
                   ? cx(

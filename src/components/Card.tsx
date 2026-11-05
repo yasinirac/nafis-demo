@@ -13,12 +13,18 @@ const tones: Record<CardTone, string> = {
 export interface CardProps extends HTMLAttributes<HTMLElement> {
   as?: 'section' | 'div' | 'article' | 'aside' | 'li';
   tone?: CardTone;
+  /** Deprecated: use padding. padded={false} equals padding="none". */
   padded?: boolean;
+  /** md = 20px (default), sm = 16px for narrow phone frames, none. */
+  padding?: 'md' | 'sm' | 'none';
 }
 
-export function Card({ as: As = 'section', tone = 'default', padded = true, className, children, ...rest }: CardProps) {
+const paddings = { md: 'p-5', sm: 'p-4', none: '' } as const;
+
+export function Card({ as: As = 'section', tone = 'default', padded = true, padding, className, children, ...rest }: CardProps) {
+  const pad = padding ?? (padded ? 'md' : 'none');
   return (
-    <As className={cx('rounded-card min-w-0', tones[tone], padded && 'p-5', className)} {...rest}>
+    <As className={cx('rounded-card min-w-0', tones[tone], paddings[pad], className)} {...rest}>
       {children}
     </As>
   );
@@ -37,7 +43,7 @@ export interface CardHeaderProps {
 export function CardHeader({ title, titleAs: H = 'h2', id, eyebrow, description, actions, className }: CardHeaderProps) {
   return (
     <div className={cx('mb-4 flex flex-wrap items-start justify-between gap-x-4 gap-y-2', className)}>
-      <div className="min-w-0 flex-1">
+      <div className="min-w-0 flex-1 basis-[220px]">
         {eyebrow ? <div className="mb-1 text-[13px] font-medium text-ink2">{eyebrow}</div> : null}
         <H id={id} className="m-0 text-[17px] font-semibold leading-snug text-ink">
           {title}

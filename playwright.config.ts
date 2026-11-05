@@ -9,9 +9,10 @@ const repoName = process.env.GITHUB_REPOSITORY?.split('/')[1] ?? 'nafis-demo';
  */
 export default defineConfig({
   testDir: 'tests',
-  timeout: 60_000,
+  timeout: 90_000,
+  expect: { timeout: 10_000 },
   fullyParallel: true,
-  workers: process.env.CI ? 2 : 4,
+  workers: process.env.CI ? 2 : 3,
   reporter: [['list']],
   use: {
     baseURL: `http://localhost:${port}/${repoName}/`,

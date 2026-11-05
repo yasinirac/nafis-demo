@@ -85,8 +85,8 @@ export function SegmentedBar({
                     }}
                     onBlur={() => setActive(null)}
                     onKeyDown={(e) => roving.onKeyDown(e, i)}
-                    className="absolute top-0 h-full rounded bg-transparent"
-                    style={{ left: g.x, width: Math.max(8, g.w) }}
+                    className="absolute rounded bg-transparent"
+                    style={{ left: g.x, width: Math.max(8, g.w), top: -8, height: 44 }}
                   />
                 );
               })}

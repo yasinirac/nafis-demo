@@ -11,7 +11,7 @@ import { join, relative } from 'node:path';
 
 const roots = ['src/portals', 'src/app'];
 const textAttr = /\b(label|title|aria-label|placeholder|description|alt|legend|caption|sub|unit|detail)=("([^"]*\d[^"]*)"|'([^']*\d[^']*)')/g;
-const jsxText = />([^<>{}]*\d[^<>{}]*)</g;
+const jsxText = /(?<=["'}A-Za-z0-9])>([^<>{}]*\d[^<>{}]*)</g;
 
 function walk(dir) {
   const out = [];

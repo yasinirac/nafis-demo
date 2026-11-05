@@ -15,12 +15,14 @@ export interface TileProps {
   badge?: ReactNode;
   footer?: ReactNode;
   hero?: boolean;
+  /** Smaller value (24px) for five-up rows and long currency values. */
+  compact?: boolean;
   className?: string;
   as?: 'div' | 'li' | 'section';
 }
 
 /** A KPI tile: label, value, a line of context and the data status. */
-export function Tile({ label, value, unit, sub, status, statusAsOf, badge, footer, hero, className, as: As = 'div' }: TileProps) {
+export function Tile({ label, value, unit, sub, status, statusAsOf, badge, footer, hero, compact, className, as: As = 'div' }: TileProps) {
   return (
     <As className={cx('flex min-w-0 flex-col gap-2 rounded-card border border-line bg-surface p-4', className)}>
       <div className="flex items-start justify-between gap-2">
@@ -28,7 +30,7 @@ export function Tile({ label, value, unit, sub, status, statusAsOf, badge, foote
         {status ? <DataTag status={status} asOf={statusAsOf} /> : null}
       </div>
       <p className="m-0 flex flex-wrap items-baseline gap-x-1.5 font-heading leading-none text-ink">
-        <span className={cx('font-semibold', hero ? 'text-[52px]' : 'text-[30px]')}>{value}</span>
+        <span className={cx('font-semibold', hero ? 'text-[52px]' : compact ? 'text-[24px]' : 'text-[30px]')}>{value}</span>
         {unit ? <span className="font-sans text-sm font-medium text-ink2">{unit}</span> : null}
       </p>
       {badge ? <div>{badge}</div> : null}

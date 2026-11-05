@@ -12,15 +12,27 @@ export interface FunnelStage {
 }
 
 /**
- * A funnel drawn as decreasing bars from one baseline, with the conversion
- * between stages written beside each bar. The step with the lowest
- * conversion (the biggest drop) is marked in words.
+ * A funnel drawn as decreasing bars from one baseline. Each stage has its
+ * name on one line and the conversion from the previous stage on a second
+ * line, so long labels never run into each other. The step with the lowest
+ * conversion (the biggest drop) is marked in words and with an underline.
  */
-export function Funnel({ ariaLabel, stages, dropLabel = 'Biggest drop' }: { ariaLabel: string; stages: FunnelStage[]; dropLabel?: string }) {
+export function Funnel({
+  ariaLabel,
+  stages,
+  dropLabel = 'Biggest drop',
+  conversionLabel = 'of the previous step',
+}: {
+  ariaLabel: string;
+  stages: FunnelStage[];
+  dropLabel?: string;
+  conversionLabel?: string;
+}) {
   const [ref, width] = useMeasure<HTMLDivElement>();
   const [active, setActive] = useState<number | null>(null);
   const roving = useRoving(stages.length);
-  const rowH = 54;
+  const rowH = 70;
+  const barTop = 40;
   const barH = 20;
   const h = stages.length * rowH + 4;
   const maxV = Math.max(...stages.map((s) => s.value));
@@ -40,24 +52,22 @@ export function Funnel({ ariaLabel, stages, dropLabel = 'Biggest drop' }: { aria
               const isDrop = i === dropIndex;
               return (
                 <g key={s.key}>
-                  <text x={0} y={y + 14} fontSize={13} style={{ fill: chartColors.ink }}>
+                  <text x={0} y={y + 14} fontSize={13} fontWeight={500} style={{ fill: chartColors.ink }}>
                     {s.label}
-                    {s.conversion != null ? (
-                      <tspan style={{ fill: chartColors.axisText }} fontWeight={isDrop ? 600 : 400}>
-                        {`  ${s.conversion}% of the previous step${isDrop ? ` · ${dropLabel}` : ''}`}
-                      </tspan>
-                    ) : null}
                   </text>
+                  {s.conversion != null ? (
+                    <text x={0} y={y + 31} fontSize={12} fontWeight={isDrop ? 600 : 400} style={{ fill: isDrop ? chartColors.ink : chartColors.axisText }}>
+                      {`${s.conversion}% ${conversionLabel}${isDrop ? ` · ${dropLabel}` : ''}`}
+                    </text>
+                  ) : null}
                   <path
-                    d={barPath(0, y + 22, w, barH, 'right')}
+                    d={barPath(0, y + barTop, w, barH, 'right')}
                     style={{ fill: chartColors.series1, opacity: active != null && active !== i ? 0.55 : 1 }}
                   />
-                  <text x={w + 8} y={y + 22 + barH / 2} dy="0.32em" fontSize={13} fontWeight={600} className="tabular" style={{ fill: chartColors.ink }}>
+                  <text x={w + 8} y={y + barTop + barH / 2} dy="0.32em" fontSize={13} fontWeight={600} className="tabular" style={{ fill: chartColors.ink }}>
                     {formatInt(s.value)}
                   </text>
-                  {isDrop ? (
-                    <rect x={0} y={y + 22 + barH + 3} width={Math.min(w, 120)} height={2} style={{ fill: chartColors.ink }} />
-                  ) : null}
+                  {isDrop ? <rect x={0} y={y + 34} width={Math.min(w, 120)} height={2} style={{ fill: chartColors.ink }} /> : null}
                 </g>
               );
             })}
@@ -71,7 +81,7 @@ export function Funnel({ ariaLabel, stages, dropLabel = 'Biggest drop' }: { aria
                 }}
                 type="button"
                 tabIndex={roving.tabIndexFor(i)}
-                aria-label={`${s.label}: ${formatInt(s.value)}${s.conversion != null ? `, ${s.conversion}% of the previous step` : ''}${i === dropIndex ? `, ${dropLabel.toLowerCase()}` : ''}`}
+                aria-label={`${s.label}: ${formatInt(s.value)}${s.conversion != null ? `, ${s.conversion}% ${conversionLabel}` : ''}${i === dropIndex ? `, ${dropLabel.toLowerCase()}` : ''}`}
                 onMouseEnter={() => setActive(i)}
                 onFocus={() => {
                   roving.setFocusIndex(i);
@@ -87,14 +97,12 @@ export function Funnel({ ariaLabel, stages, dropLabel = 'Biggest drop' }: { aria
           {active != null && stages[active] ? (
             <ChartTooltip
               x={Math.min(width - 230, sx(stages[active].value) + 40)}
-              y={active * rowH + rowH}
+              y={active * rowH + barTop - 4}
               containerWidth={width}
               title={stages[active].label}
               rows={[
                 { label: 'people', value: formatInt(stages[active].value), color: chartColors.series1, kind: 'rect' },
-                ...(stages[active].conversion != null
-                  ? [{ label: 'of the previous step', value: `${stages[active].conversion}%` }]
-                  : []),
+                ...(stages[active].conversion != null ? [{ label: conversionLabel, value: `${stages[active].conversion}%` }] : []),
               ]}
             />
           ) : null}

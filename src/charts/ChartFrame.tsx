@@ -2,6 +2,7 @@ import { useState, type ReactNode } from 'react';
 import { Table2 } from 'lucide-react';
 import { cx } from '@/lib/cx';
 import { useDomId } from '@/lib/useId';
+import { useOverflow } from '@/lib/useOverflow';
 import type { DataStatus } from '@/data/types';
 import { DataTag } from '@/components/Chip';
 
@@ -104,6 +105,7 @@ export function ChartFrame({
   card = true,
 }: ChartFrameProps) {
   const [showTable, setShowTable] = useState(false);
+  const [tableRef, tableOverflows] = useOverflow<HTMLDivElement>();
   const tableId = useDomId('chart-table');
   const caption = table.caption ?? (typeof title === 'string' ? title : 'Chart values');
   return (
@@ -136,8 +138,14 @@ export function ChartFrame({
       {footnote ? <figcaption className="mt-3 text-[13px] leading-relaxed text-ink2">{footnote}</figcaption> : null}
       <div id={tableId} hidden={!showTable} className="mt-4">
         {showTable ? (
-          <div role="region" aria-label={`${caption} table`} tabIndex={0} className="max-w-full overflow-x-auto">
-            <table className="w-full border-collapse text-left text-sm">
+          <div
+            ref={tableRef}
+            role={tableOverflows ? 'region' : undefined}
+            aria-label={tableOverflows ? `${caption} table` : undefined}
+            tabIndex={tableOverflows ? 0 : undefined}
+            className="relative max-w-full overflow-x-auto"
+          >
+            <table className="w-full border-collapse text-start text-sm">
               <caption className="sr-only">{caption}</caption>
               <thead>
                 <tr className="border-b border-line">
@@ -145,7 +153,7 @@ export function ChartFrame({
                     <th
                       key={c.key}
                       scope="col"
-                      className={cx('whitespace-nowrap px-3 py-2 text-[13px] font-semibold text-ink2', c.numeric && 'text-right')}
+                      className={cx('whitespace-nowrap px-3 py-2 text-start text-[13px] font-semibold text-ink2', c.numeric && 'text-end')}
                     >
                       {c.label}
                     </th>
@@ -161,7 +169,7 @@ export function ChartFrame({
                         <Cell
                           key={c.key}
                           scope={j === 0 ? 'row' : undefined}
-                          className={cx('px-3 py-2 text-ink', j === 0 && 'text-left font-medium', c.numeric && 'tabular text-right')}
+                          className={cx('relative px-3 py-2 text-start text-ink', j === 0 && 'font-medium', c.numeric && 'tabular text-end')}
                         >
                           {row[c.key] ?? '—'}
                         </Cell>

@@ -44,7 +44,11 @@ export function Stepper({
       )}
     >
       {steps.map((step, i) => (
-        <li key={i} aria-current={step.state === 'current' ? 'step' : undefined} className="flex min-w-0 items-start gap-3">
+        <li
+          key={i}
+          aria-current={step.state === 'current' || step.state === 'returned' ? 'step' : undefined}
+          className="flex min-w-0 items-start gap-3"
+        >
           <span
             aria-hidden="true"
             className={cx(

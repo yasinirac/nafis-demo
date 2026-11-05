@@ -22,6 +22,8 @@ export interface LineSeries {
   endLabel?: string;
   /** Leave this series out of the tooltip (for example a duplicate join point). */
   hideInTooltip?: boolean;
+  /** Leave these x values of this series out of the tooltip, e.g. a forecast's join point. */
+  tooltipExclude?: number[];
 }
 
 export interface BandSeries {
@@ -141,7 +143,7 @@ export function LineWithBand({
     if (tooltipRows) return tooltipRows(x);
     const rows: TooltipRow[] = [];
     series.forEach((s) => {
-      if (s.hideInTooltip) return;
+      if (s.hideInTooltip || s.tooltipExclude?.includes(x)) return;
       const p = valueAt(s, x);
       if (p && p.y != null) {
         const kind: LegendKind = s.dashed ? 'dashed' : 'line';
@@ -297,8 +299,11 @@ export function LineWithBand({
           </svg>
           <div className="absolute inset-0">
             {xValues.map((x, i) => {
-              const left = Math.max(0, sx(x) - step / 2);
-              const w = Math.min(step, width - left);
+              // Each target spans halfway to its neighbours, so uneven x spacing never overlaps.
+              const prev = i > 0 ? sx(xValues[i - 1] as number) : sx(x) - step;
+              const next = i < xValues.length - 1 ? sx(xValues[i + 1] as number) : sx(x) + step;
+              const left = Math.max(0, (prev + sx(x)) / 2);
+              const w = Math.max(4, Math.min(width, (sx(x) + next) / 2) - left);
               return (
                 <button
                   key={x}

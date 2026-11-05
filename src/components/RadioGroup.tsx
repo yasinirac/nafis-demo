@@ -17,7 +17,7 @@ export interface RadioGroupProps<T extends string> {
   value: T | null;
   onChange: (value: T) => void;
   /**
-   * pill: rounded pills that wrap · segmented: equal-width row ·
+   * pill: rounded pills that wrap · segmented: equal-width row of 8px segments ·
    * card: stacked cards with a description · compact: small pills for dense rows
    */
   variant?: 'pill' | 'segmented' | 'card' | 'compact';
@@ -26,9 +26,17 @@ export interface RadioGroupProps<T extends string> {
   disabled?: boolean;
 }
 
+const optionShape: Record<Exclude<RadioGroupProps<string>['variant'], 'card' | undefined>, string> = {
+  pill: 'rounded-full px-4 py-2 text-sm',
+  compact: 'rounded-full px-3 py-1.5 text-[13px]',
+  segmented: 'rounded-control px-2 py-2 text-sm',
+};
+
 /**
  * A radio group built on native inputs inside a fieldset, so arrow keys,
  * Tab and screen readers behave as expected (role="radio" is implicit).
+ * A disabled group (prop or disabled fieldset) looks disabled: the native
+ * input is the peer, so peer-disabled styles apply either way.
  */
 export function RadioGroup<T extends string>({
   legend,
@@ -70,7 +78,8 @@ export function RadioGroup<T extends string>({
                 <span
                   className={cx(
                     'peer-ring flex w-full cursor-pointer gap-3 rounded-card border bg-surface p-4 transition-colors',
-                    checked ? 'border-2 border-accent bg-accent-tint' : 'border-control hover:bg-accent-tint',
+                    'peer-disabled:cursor-not-allowed peer-disabled:opacity-60',
+                    checked ? 'border-2 border-accent bg-accent-tint' : 'border-control hover:bg-accent-tint peer-disabled:hover:bg-surface',
                   )}
                 >
                   <span
@@ -93,10 +102,12 @@ export function RadioGroup<T extends string>({
               ) : (
                 <span
                   className={cx(
-                    'peer-ring inline-flex w-full cursor-pointer items-center justify-center rounded-full border text-center font-medium leading-tight transition-colors',
-                    variant === 'compact' ? 'min-h-touch px-3 py-1.5 text-[13px]' : 'min-h-touch px-4 py-2 text-sm',
-                    variant === 'segmented' && 'rounded-control px-2',
-                    checked ? 'border-accent bg-accent text-white' : 'border-control bg-surface text-ink hover:bg-accent-tint',
+                    'peer-ring inline-flex min-h-touch w-full cursor-pointer items-center justify-center border text-center font-medium leading-tight transition-colors',
+                    'peer-disabled:cursor-not-allowed peer-disabled:opacity-60',
+                    optionShape[variant],
+                    checked
+                      ? 'border-accent bg-accent text-white'
+                      : 'border-control bg-surface text-ink hover:bg-accent-tint peer-disabled:hover:bg-surface',
                   )}
                 >
                   {option.label}

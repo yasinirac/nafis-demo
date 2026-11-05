@@ -1,13 +1,16 @@
 import type { ReactNode } from 'react';
 import { cx } from '@/lib/cx';
+import { useOverflow } from '@/lib/useOverflow';
 
 export interface Column<T> {
   key: string;
   header: ReactNode;
   render: (row: T) => ReactNode;
-  /** Right-aligned, tabular figures. */
+  /** End-aligned, tabular figures. */
   numeric?: boolean;
   className?: string;
+  /** Let a long header wrap instead of forcing the table wider. */
+  wrapHeader?: boolean;
   /** Render this column's cells as row headers (th scope="row"). */
   rowHeader?: boolean;
 }
@@ -28,7 +31,8 @@ export interface DataTableProps<T> {
 }
 
 /**
- * A plain semantic table inside a horizontally scrollable, focusable region.
+ * A plain semantic table inside a positioned, horizontally scrollable region.
+ * The region becomes a labelled tab stop only when it actually scrolls.
  * Never add a risk column: employers never see a number about a person.
  */
 export function DataTable<T>({
@@ -43,19 +47,32 @@ export function DataTable<T>({
   regionLabel,
   footer,
 }: DataTableProps<T>) {
+  const [ref, overflowing] = useOverflow<HTMLDivElement>();
   const pad = dense ? 'px-3 py-2' : 'px-3 py-3';
   const label = regionLabel ?? (typeof caption === 'string' ? caption : 'Table');
   return (
-    <div role="region" aria-label={label} tabIndex={0} className={cx('max-w-full overflow-x-auto rounded-control', className)}>
-      <table className="w-full border-collapse text-left text-sm">
-        <caption className={cx(hideCaption ? 'sr-only' : 'pb-2 text-left text-[15px] font-semibold text-ink')}>{caption}</caption>
+    <div
+      ref={ref}
+      role={overflowing ? 'region' : undefined}
+      aria-label={overflowing ? label : undefined}
+      tabIndex={overflowing ? 0 : undefined}
+      className={cx('relative max-w-full overflow-x-auto rounded-control', className)}
+    >
+      <table className="w-full border-collapse text-start text-sm">
+        <caption className={cx(hideCaption ? 'sr-only' : 'pb-2 text-start text-[15px] font-semibold text-ink')}>{caption}</caption>
         <thead>
           <tr className="border-b border-line">
             {columns.map((col) => (
               <th
                 key={col.key}
                 scope="col"
-                className={cx(pad, 'whitespace-nowrap text-[13px] font-semibold text-ink2', col.numeric && 'text-right', col.className)}
+                className={cx(
+                  pad,
+                  'text-start text-[13px] font-semibold text-ink2',
+                  col.wrapHeader ? 'whitespace-normal' : 'whitespace-nowrap',
+                  col.numeric && 'text-end',
+                  col.className,
+                )}
               >
                 {col.header}
               </th>
@@ -76,9 +93,9 @@ export function DataTable<T>({
                       scope={col.rowHeader ? 'row' : undefined}
                       className={cx(
                         pad,
-                        'align-top text-ink',
+                        'relative text-start align-top text-ink',
                         col.rowHeader && 'font-medium',
-                        col.numeric && 'tabular text-right',
+                        col.numeric && 'tabular text-end',
                         col.className,
                       )}
                     >

@@ -40,7 +40,23 @@ export function StatusPill({ tone, children, className }: { tone: Tone; children
   );
 }
 
-/** A block-level status message. Use live="polite" when it appears after an action. */
+/**
+ * A polite live region that is always in the DOM. Put messages that appear
+ * after an action inside it, so screen readers announce them: a region that
+ * mounts together with its text is often not announced.
+ */
+export function LiveRegion({ children, className }: { children?: ReactNode; className?: string }) {
+  return (
+    <div role="status" aria-live="polite" className={className}>
+      {children}
+    </div>
+  );
+}
+
+/**
+ * A block-level status message. For a message that appears after an action,
+ * wrap it in LiveRegion (the `live` prop is kept for banners present at load).
+ */
 export function StatusBanner({
   tone,
   title,

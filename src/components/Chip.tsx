@@ -1,4 +1,4 @@
-import type { ButtonHTMLAttributes, ReactNode } from 'react';
+import { forwardRef, type ButtonHTMLAttributes, type ReactNode } from 'react';
 import { BadgeCheck, Check, FlaskConical, Hourglass, Shapes, Sigma } from 'lucide-react';
 import { cx } from '@/lib/cx';
 import { statusLabels, type DataStatus } from '@/data/types';
@@ -73,17 +73,21 @@ export interface ToggleChipProps extends Omit<ButtonHTMLAttributes<HTMLButtonEle
 }
 
 /** A chip that toggles on and off, announced with aria-pressed. */
-export function ToggleChip({ pressed, onPressedChange, children, className, ...rest }: ToggleChipProps) {
+export const ToggleChip = forwardRef<HTMLButtonElement, ToggleChipProps>(function ToggleChip(
+  { pressed, onPressedChange, children, className, ...rest },
+  ref,
+) {
   return (
     <button
+      ref={ref}
       type="button"
       aria-pressed={pressed}
       onClick={() => onPressedChange(!pressed)}
       className={cx(
-        'inline-flex min-h-touch items-center gap-1.5 rounded-full border px-4 py-2 text-sm font-medium leading-tight transition-colors',
+        'inline-flex min-h-touch items-center gap-1.5 rounded-full border px-4 py-2 text-sm font-medium leading-tight transition-colors disabled:cursor-not-allowed disabled:opacity-60',
         pressed
           ? 'border-accent bg-accent-tint text-ink'
-          : 'border-control bg-surface text-ink hover:bg-accent-tint',
+          : 'border-control bg-surface text-ink hover:bg-accent-tint disabled:hover:bg-surface',
         className,
       )}
       {...rest}
@@ -92,4 +96,4 @@ export function ToggleChip({ pressed, onPressedChange, children, className, ...r
       {children}
     </button>
   );
-}
+});

@@ -14,6 +14,8 @@ export interface AppShellProps {
   roleChip?: ReactNode;
   /** Extra chips after the role chip, for example an access tier. */
   extraChips?: ReactNode;
+  /** Screen-specific content shown under the nav links (for example a certified metrics list). */
+  navExtra?: ReactNode;
   children: ReactNode;
 }
 
@@ -21,7 +23,7 @@ export interface AppShellProps {
  * Desktop portal shell: sticky top bar, a left nav (up to 240px) that stacks
  * above the content below 900px, and content up to 1360px with 24px gutters.
  */
-export function AppShell({ portal, persona, orgChip, roleChip, extraChips, children }: AppShellProps) {
+export function AppShell({ portal, persona, orgChip, roleChip, extraChips, navExtra, children }: AppShellProps) {
   const p = portalById(portal);
   const who = personaById(persona);
   return (
@@ -62,6 +64,7 @@ export function AppShell({ portal, persona, orgChip, roleChip, extraChips, child
               </li>
             ))}
           </ul>
+          {navExtra ? <div className="mt-4">{navExtra}</div> : null}
           <details className="mt-3 nav:hidden">
             <summary className="flex min-h-touch cursor-pointer items-center px-3 text-sm font-medium text-ink2">
               Planned screens in this portal ({p.planned.length})

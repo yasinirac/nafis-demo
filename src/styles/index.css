@@ -7,6 +7,7 @@
 
 @layer base {
   html {
+    scroll-padding-top: 128px;
     background: var(--ground);
     color: var(--ink);
     -webkit-text-size-adjust: 100%;

@@ -23,6 +23,10 @@ page.on('console', (m) => {
 page.on('pageerror', (e) => errors.push(String(e)));
 await page.goto(base + route, { waitUntil: 'networkidle' });
 await page.waitForTimeout(500);
+if (route.startsWith('/talent') && Number(w) >= 640) {
+  await page.addStyleTag({ content: 'main#main{overflow:visible!important;height:auto!important} main#main ~ nav{position:static!important} main#main{max-height:none!important} div:has(> main#main){height:auto!important;overflow:visible!important}' });
+  await page.waitForTimeout(200);
+}
 await page.screenshot({ path: out, fullPage: true });
 console.log(JSON.stringify({ out, route, width: Number(w), errors }));
 await browser.close();

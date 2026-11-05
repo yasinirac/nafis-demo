@@ -75,7 +75,7 @@ export function TopBar({
     <>
       <header className="sticky top-0 z-40 border-b border-line bg-surface">
         <div className="mx-auto flex max-w-[1408px] flex-wrap items-center gap-x-3 gap-y-1.5 px-4 py-2 sm:px-6">
-          <Link to={brandTo} className="me-1 font-heading text-[15px] font-bold leading-tight text-ink no-underline hover:text-ink">
+          <Link to={brandTo} className="me-1 inline-flex min-h-touch items-center font-heading text-[15px] font-bold leading-tight text-ink no-underline hover:text-ink">
             {brand}
           </Link>
           {chips ? <div className="hidden flex-wrap items-center gap-2 sm:flex">{chips}</div> : null}
@@ -89,13 +89,13 @@ export function TopBar({
           </div>
         </div>
       </header>
-      <div className="border-b border-line bg-surface sm:hidden">
+      <nav aria-label="Demo controls" className="border-b border-line bg-surface sm:hidden">
         <div className="flex flex-wrap items-center gap-2 px-4 py-1.5">
           <RoleSwitcher current={persona} compact />
           <PlatformMapLink current={mapCurrent} />
           {chips ? <div className="flex w-full flex-wrap gap-2 pb-1">{chips}</div> : null}
         </div>
-      </div>
+      </nav>
     </>
   );
 }

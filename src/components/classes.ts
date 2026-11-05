@@ -27,9 +27,11 @@ export function buttonClass(variant: ButtonVariant = 'secondary', size: ButtonSi
 }
 
 const controlBase =
-  'w-full rounded-control border border-control bg-surface px-3 text-[15px] text-ink placeholder:text-muted read-only:bg-line2 read-only:text-ink2 disabled:bg-line2 disabled:text-muted';
+  'w-full rounded-control border border-control bg-surface px-3 text-[15px] text-ink placeholder:text-muted disabled:cursor-not-allowed disabled:bg-line2 disabled:text-muted';
 
-export const inputClass = cx(controlBase, 'min-h-touch py-2');
-export const textareaClass = cx(controlBase, 'min-h-[96px] py-2 leading-relaxed');
+/** Read-only styling applies to text inputs only: a <select> always matches :read-only. */
+const readOnly = 'read-only:bg-line2 read-only:text-ink2';
+
+export const inputClass = cx(controlBase, readOnly, 'min-h-touch py-2');
+export const textareaClass = cx(controlBase, readOnly, 'min-h-[96px] py-2 leading-relaxed');
 export const selectClass = cx(controlBase, 'min-h-touch py-2 pe-8');
-

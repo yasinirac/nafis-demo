@@ -1,4 +1,10 @@
-import type { InputHTMLAttributes, ReactNode, SelectHTMLAttributes, TextareaHTMLAttributes } from 'react';
+import {
+  forwardRef,
+  type InputHTMLAttributes,
+  type ReactNode,
+  type SelectHTMLAttributes,
+  type TextareaHTMLAttributes,
+} from 'react';
 import { inputClass, selectClass, textareaClass } from './classes';
 import { cx } from '@/lib/cx';
 import { useDomId } from '@/lib/useId';
@@ -34,9 +40,9 @@ export function Field({ label, hint, error, required, optional, className, hideL
         {optional ? <span className="font-normal text-ink2"> (optional)</span> : null}
       </label>
       {hint ? (
-        <p id={hintId} className="m-0 text-[13px] leading-snug text-ink2">
+        <div id={hintId} className="text-[13px] leading-snug text-ink2">
           {hint}
-        </p>
+        </div>
       ) : null}
       {children({ id, describedBy, invalid: Boolean(error) })}
       {error ? (
@@ -48,21 +54,30 @@ export function Field({ label, hint, error, required, optional, className, hideL
   );
 }
 
-export function TextInput({ className, ...rest }: InputHTMLAttributes<HTMLInputElement>) {
-  return <input className={cx(inputClass, className)} {...rest} />;
-}
+export const TextInput = forwardRef<HTMLInputElement, InputHTMLAttributes<HTMLInputElement>>(function TextInput(
+  { className, ...rest },
+  ref,
+) {
+  return <input ref={ref} className={cx(inputClass, className)} {...rest} />;
+});
 
-export function TextArea({ className, ...rest }: TextareaHTMLAttributes<HTMLTextAreaElement>) {
-  return <textarea className={cx(textareaClass, className)} {...rest} />;
-}
+export const TextArea = forwardRef<HTMLTextAreaElement, TextareaHTMLAttributes<HTMLTextAreaElement>>(function TextArea(
+  { className, ...rest },
+  ref,
+) {
+  return <textarea ref={ref} className={cx(textareaClass, className)} {...rest} />;
+});
 
-export function Select({ className, children, ...rest }: SelectHTMLAttributes<HTMLSelectElement>) {
+export const Select = forwardRef<HTMLSelectElement, SelectHTMLAttributes<HTMLSelectElement>>(function Select(
+  { className, children, ...rest },
+  ref,
+) {
   return (
-    <select className={cx(selectClass, className)} {...rest}>
+    <select ref={ref} className={cx(selectClass, className)} {...rest}>
       {children}
     </select>
   );
-}
+});
 
 /** A native checkbox with its label; the whole row is the touch target. */
 export function Checkbox({
@@ -71,26 +86,32 @@ export function Checkbox({
   checked,
   onChange,
   className,
+  id: idProp,
+  disabled,
 }: {
   label: ReactNode;
   description?: ReactNode;
   checked: boolean;
   onChange: (next: boolean) => void;
   className?: string;
+  id?: string;
+  disabled?: boolean;
 }) {
-  const id = useDomId('check');
+  const generated = useDomId('check');
+  const id = idProp ?? generated;
   return (
-    <div className={cx('flex min-h-touch items-start gap-3 py-1', className)}>
+    <div className={cx('flex min-h-touch items-start gap-3 py-1', disabled && 'opacity-60', className)}>
       <input
         id={id}
         type="checkbox"
         checked={checked}
+        disabled={disabled}
         onChange={(e) => onChange(e.target.checked)}
         aria-describedby={description ? `${id}-desc` : undefined}
-        className="mt-0.5 h-5 w-5 shrink-0 cursor-pointer rounded border-control accent-[var(--accent)]"
+        className="mt-0.5 h-5 w-5 shrink-0 cursor-pointer rounded border-control accent-[var(--accent)] disabled:cursor-not-allowed"
       />
       <div className="min-w-0">
-        <label htmlFor={id} className="cursor-pointer text-[15px] leading-snug text-ink">
+        <label htmlFor={id} className={cx('text-[15px] leading-snug text-ink', disabled ? 'cursor-not-allowed' : 'cursor-pointer')}>
           {label}
         </label>
         {description ? (

@@ -19,6 +19,8 @@ export interface HeatmapProps {
   selected: { row: number; col: number } | null;
   onSelect: (cell: { row: number; col: number }) => void;
   nullLabel?: string;
+  /** Word for the value in the tooltip, for example 'coverage'. */
+  measureLabel?: string;
 }
 
 /**
@@ -26,7 +28,7 @@ export interface HeatmapProps {
  * arrow keys move between cells (one tab stop) and Enter or Space selects.
  * The selected cell is outlined in ink, never in the action colour.
  */
-export function Heatmap({ ariaLabel, rows, columns, values, bins, format, selected, onSelect, nullLabel = 'too few people' }: HeatmapProps) {
+export function Heatmap({ ariaLabel, rows, columns, values, bins, format, selected, onSelect, nullLabel = 'too few people', measureLabel = 'coverage' }: HeatmapProps) {
   const [ref, width] = useMeasure<HTMLDivElement>();
   const [hover, setHover] = useState<{ row: number; col: number } | null>(null);
   const [focus, setFocus] = useState<{ row: number; col: number }>(selected ?? { row: 0, col: 0 });
@@ -34,7 +36,9 @@ export function Heatmap({ ariaLabel, rows, columns, values, bins, format, select
 
   const labelW = Math.min(150, Math.max(96, width * 0.24));
   const cellW = columns.length ? (width - labelW) / columns.length : 0;
-  const cellH = 40;
+  const cellH = 44;
+  const maxLabelChars = Math.max(6, Math.floor((labelW - 10) / (13 * 0.56)));
+  const shortLabel = (r: string) => (r.length > maxLabelChars ? `${r.slice(0, maxLabelChars - 1)}…` : r);
   const top = 26;
   const h = top + rows.length * cellH;
 
@@ -81,7 +85,7 @@ export function Heatmap({ ariaLabel, rows, columns, values, bins, format, select
             {rows.map((r, i) => (
               <g key={r}>
                 <text x={0} y={top + cellH * i + cellH / 2} dy="0.32em" fontSize={13} style={{ fill: chartColors.ink }}>
-                  {r}
+                  {shortLabel(r)}
                 </text>
                 {columns.map((c, j) => {
                   const v = values[i]?.[j] ?? null;
@@ -167,7 +171,7 @@ export function Heatmap({ ariaLabel, rows, columns, values, bins, format, select
               title={`${rows[tip.row]} · ${columns[tip.col]?.name ?? ''}`}
               rows={[
                 {
-                  label: 'coverage',
+                  label: measureLabel,
                   value: values[tip.row]?.[tip.col] == null ? `— ${nullLabel}` : format(values[tip.row]?.[tip.col] as number),
                 },
               ]}

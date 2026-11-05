@@ -17,6 +17,8 @@ export interface BarDatum {
   tooltipRows?: TooltipRow[];
   /** Accessible name for the keyboard target. */
   ariaLabel?: string;
+  /** Horizontal only: a warning marker (triangle icon and a word) after the value, e.g. "Lowest". */
+  flag?: string;
 }
 
 export interface BarsProps {
@@ -67,13 +69,13 @@ export function Bars({
 
   function nameFor(d: BarDatum): string {
     if (d.ariaLabel) return d.ariaLabel;
-    return `${d.label}${d.sublabel ? `, ${d.sublabel}` : ''}: ${d.value == null ? 'not shown, too few people' : d.valueLabel}`;
+    return `${d.label}${d.sublabel ? `, ${d.sublabel}` : ''}: ${d.value == null ? 'not shown, too few people' : d.valueLabel}${d.flag ? `, ${d.flag}` : ''}`;
   }
 
   if (orientation === 'horizontal') {
     const rowH = 48;
     const barH = 16;
-    const valueSpace = 64;
+    const valueSpace = data.some((d) => d.flag) ? 150 : 64;
     const h = data.length * rowH + 8;
     const sx = linearScale([0, domainMax], [0, Math.max(10, width - valueSpace)]);
     return (
@@ -110,6 +112,24 @@ export function Bars({
                     >
                       {d.value == null ? '—' : d.valueLabel}
                     </text>
+                    {d.flag && d.value != null ? (
+                      <g aria-hidden="true">
+                        <path
+                          d={`M${w + 18 + estimateTextWidth(d.valueLabel, 13)},${y + 22 + barH / 2 + 6}l6,-11l6,11z`}
+                          style={{ fill: 'var(--warn-bar)' }}
+                        />
+                        <text
+                          x={w + 34 + estimateTextWidth(d.valueLabel, 13)}
+                          y={y + 22 + barH / 2}
+                          dy="0.32em"
+                          fontSize={12}
+                          fontWeight={600}
+                          style={{ fill: 'var(--warn-text)' }}
+                        >
+                          {d.flag}
+                        </text>
+                      </g>
+                    ) : null}
                   </g>
                 );
               })}

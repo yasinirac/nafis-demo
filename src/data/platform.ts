@@ -192,7 +192,7 @@ export const portals: PortalInfo[] = [
     group: 'runs',
     home: '/developer',
     built: [{ label: 'API catalogue and sandbox', path: '/developer' }],
-    planned: ['Model registry', 'Agent tool registry', 'Release train', 'Status'],
+    planned: ['Model registry', 'Release train', 'Status', 'Partner certification queue'],
   },
   {
     id: 'contributor',
@@ -275,6 +275,9 @@ export function portalById(id: PortalId): PortalInfo {
 }
 
 export function screenForPath(path: string): ScreenInfo | undefined {
-  if (path.startsWith('/staff/integrity/')) return screens.find((s) => s.path.startsWith('/staff/integrity/'));
+  if (path.startsWith('/staff/integrity/')) {
+    const known = screens.find((s) => s.path === path);
+    return known ?? { path, title: 'Integrity case not found', portal: 'staff', persona: 'salem', purpose: 'Unknown case id.' };
+  }
   return screens.find((s) => s.path === path);
 }
