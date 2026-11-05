@@ -8,7 +8,11 @@
  */
 import { chromium } from '@playwright/test';
 
-const [route = '/', out = 'shot.png', w = '1440', h = '900'] = process.argv.slice(2);
+const [rawRoute = '/', out = 'shot.png', w = '1440', h = '900'] = process.argv.slice(2);
+// Git Bash rewrites "/employer" into "C:/Program Files/Git/employer"; undo that,
+// and accept routes written without the leading slash ("employer").
+const stripped = rawRoute.replace(/^[A-Za-z]:[\\/].*?[\\/]Git[\\/]?/, '/').replace(/\\/g, '/');
+const route = stripped.startsWith('/') ? stripped : `/${stripped}`;
 const base = process.env.SHOT_BASE ?? 'http://localhost:5173/nafis-demo/#';
 const browser = await chromium.launch();
 const page = await browser.newPage({ viewport: { width: Number(w), height: Number(h) }, deviceScaleFactor: 1 });
