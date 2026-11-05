@@ -1,0 +1,62 @@
+/*
+ * Design tokens. Mirrored in tailwind.config.ts, which maps each colour to
+ * these variables. Light theme only (see docs/DECISIONS.md).
+ *
+ * Teal means "you can act on this": buttons, links, selected states, nav.
+ * Teal is never used in charts.
+ */
+:root {
+  /* Ground and text */
+  --ground: #f5f6f8;
+  --surface: #ffffff;
+  --ink: #12161f;
+  --ink-2: #4a5363; /* secondary text */
+  --muted: #5f6878; /* muted text, 5.6:1 on white */
+  --line: #e2e5ea;
+  --line-2: #eef0f3;
+  --control: #797e86; /* control borders, never lighter: 4.1:1 on white */
+
+  /* Accent: action only */
+  --accent: #0e6b63;
+  --accent-tint: #e6f2f0;
+  --accent-hover: #0a4f49;
+
+  /* Status: always paired with an icon and a word */
+  --warn-text: #8a4b05;
+  --warn-bg: #fbf0e1;
+  --warn-bar: #c27a1a;
+  --crit-text: #a3201a;
+  --crit-bg: #fdecea;
+  --good-icon: #3f8e50;
+  --good-bg: #f3faf4;
+
+  /* Chart series (categorical, fixed order) and de-emphasis */
+  --series-1: #0090d4;
+  --series-2: #86198f;
+  --series-3: #043dff;
+  --series-muted: #9ea2a9;
+
+  /* Sequential ramp: white text only on seq-4 and seq-5 */
+  --seq-1: #effaff;
+  --seq-2: #75dbff;
+  --seq-3: #0090d4;
+  --seq-4: #0073ab;
+  --seq-5: #04334d;
+
+  /* Ordinal ramp */
+  --ord-1: #5cb8e6;
+  --ord-2: #0090d4;
+  --ord-3: #0073ab;
+  --ord-4: #04334d;
+
+  /* Code panels (developer and analyst SQL) */
+  --code-bg: #12161f;
+  --code-ink: #e9edf2;
+  --code-muted: #a9b2bf;
+
+  /* Shape */
+  --radius-card: 12px;
+  --radius-control: 8px;
+  --focus-ring: 2px solid var(--accent);
+  --focus-offset: 2px;
+}

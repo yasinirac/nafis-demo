@@ -1,0 +1,20 @@
+/*
+ * Fonts are self-hosted through Fontsource (bundled into dist/ at build time),
+ * so the demo makes no requests to third-party font servers.
+ * Roboto 400–700 body · Inter 600/700 headings · Noto Kufi Arabic 400–700
+ * Arabic body · Alexandria 600/700 Arabic headings · Roboto Mono for code.
+ */
+@import '@fontsource/roboto/400.css';
+@import '@fontsource/roboto/500.css';
+@import '@fontsource/roboto/600.css';
+@import '@fontsource/roboto/700.css';
+@import '@fontsource/inter/600.css';
+@import '@fontsource/inter/700.css';
+@import '@fontsource/noto-kufi-arabic/400.css';
+@import '@fontsource/noto-kufi-arabic/500.css';
+@import '@fontsource/noto-kufi-arabic/600.css';
+@import '@fontsource/noto-kufi-arabic/700.css';
+@import '@fontsource/alexandria/600.css';
+@import '@fontsource/alexandria/700.css';
+@import '@fontsource/roboto-mono/400.css';
+@import '@fontsource/roboto-mono/500.css';

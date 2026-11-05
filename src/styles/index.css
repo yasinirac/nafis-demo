@@ -1,0 +1,86 @@
+@import './fonts.css';
+@import './tokens.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    background: var(--ground);
+    color: var(--ink);
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    margin: 0;
+    min-height: 100vh;
+    background: var(--ground);
+    color: var(--ink);
+    font-family: Roboto, 'Noto Kufi Arabic', system-ui, sans-serif;
+    font-size: 15px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: Inter, Alexandria, system-ui, sans-serif;
+    color: var(--ink);
+  }
+
+  [lang='ar'] {
+    font-family: 'Noto Kufi Arabic', Roboto, system-ui, sans-serif;
+  }
+
+  h1[lang='ar'],
+  h2[lang='ar'],
+  h3[lang='ar'],
+  [lang='ar'] h1,
+  [lang='ar'] h2,
+  [lang='ar'] h3 {
+    font-family: Alexandria, 'Noto Kufi Arabic', system-ui, sans-serif;
+  }
+
+  a {
+    color: var(--accent);
+  }
+
+  a:hover {
+    color: var(--accent-hover);
+  }
+
+  :focus-visible {
+    outline: var(--focus-ring);
+    outline-offset: var(--focus-offset);
+  }
+
+  ::selection {
+    background: var(--accent-tint);
+    color: var(--ink);
+  }
+}
+
+@layer components {
+  .tabular {
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Visible focus for a visually hidden native input on its styled label. */
+  .peer:focus-visible + .peer-ring {
+    outline: var(--focus-ring);
+    outline-offset: var(--focus-offset);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
